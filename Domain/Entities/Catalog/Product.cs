@@ -8,7 +8,7 @@ namespace Domain.Entities.Catalog
     public class Product : Entity<int>, IAudit
     {
         private ICollection<ProductCategory> _productCategories;
-        //private ICollection<ProductImage> _productImages;
+        private ICollection<ProductImage> _productImages;
         //private ICollection<Promotion> _promotions;
         //private ICollection<CartItem> _cartItems;
         //private ICollection<OrderItem> _orderItems;
@@ -44,19 +44,19 @@ namespace Domain.Entities.Catalog
             get => _productCategories ??= new List<ProductCategory>();
             set => _productCategories = value;
         }
-        
-        //public ICollection<ProductImage> ProductImages
-        //{
-        //    get => _productImages ??= new List<ProductImage>();
-        //    set => _productImages = value;
-        //}
+
+        public ICollection<ProductImage> ProductImages
+        {
+            get => _productImages ??= new List<ProductImage>();
+            set => _productImages = value;
+        }
 
         //public ICollection<Promotion> Promotions
         //{
         //    get => _promotions ??= new List<Promotion>();
         //    set => _promotions = value;
         //}
-        
+
         //public ICollection<CartItem> CartItems
         //{
         //    get => _cartItems ??= new List<CartItem>();
