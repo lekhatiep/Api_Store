@@ -1,15 +1,13 @@
 ﻿using Domain.Entities.Identity;
-using Infastructure.Data;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 
-namespace Api.Helper
+namespace DoAn3API.Helper
 {
     public static class JwtToken
     {
