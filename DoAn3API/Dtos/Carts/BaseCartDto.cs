@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Entities.Catalog;
 
-namespace Api.Dtos.Carts
+namespace DoAn3API.Dtos.Carts
 {
     [AutoMap(typeof(Cart))]
     public class BaseCartDto
