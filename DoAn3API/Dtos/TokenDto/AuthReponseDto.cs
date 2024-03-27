@@ -1,11 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace Api.Dtos.TokenDto
+namespace DoAn3API.Dtos.TokenDto
 {
     public class AuthReponseDto
     {

@@ -21,6 +21,15 @@ namespace Infastructure.Data
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Role> Role { get; set; }
+
+        public DbSet<UserRole> UserRoles { get; set; }
+
+        public DbSet<Permission> Permissions { get; set; }
+
+        public DbSet<RolePermission> RolePermissions { get; set; }
 
     }
 }
