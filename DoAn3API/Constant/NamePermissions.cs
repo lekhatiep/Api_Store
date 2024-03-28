@@ -1,4 +1,4 @@
-﻿namespace DoAn3API.Contanst
+﻿namespace DoAn3API.Constant
 {
     public static class NamePermissions
     {

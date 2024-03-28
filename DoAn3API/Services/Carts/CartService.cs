@@ -1,15 +1,11 @@
-﻿using Api.Contanst.Catalogs;
-using Api.Dtos.CartItems;
-using Api.Dtos.Carts;
-using Api.Dtos.Categories;
-using Api.Dtos.Products;
-using Api.Services.Users;
-using AutoMapper;
-using Domain.Common.Paging;
+﻿using AutoMapper;
+using DoAn3API.Constant.Catalogs;
+using DoAn3API.Dtos.CartItems;
+using DoAn3API.Dtos.Carts;
+using DoAn3API.Services.Users;
 using Domain.Entities.Catalog;
 using Infastructure.Repositories.Catalogs.CartItemRepos;
 using Infastructure.Repositories.Catalogs.CartRepos;
-using Infastructure.Repositories.Catalogs.CategoryRepo;
 using Infastructure.Repositories.Catalogs.ProductCategoryRepo;
 using Infastructure.Repositories.ProductRepo;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Services.Carts
+namespace DoAn3API.Services.Carts
 {
     public class CartService : ICartService
     {

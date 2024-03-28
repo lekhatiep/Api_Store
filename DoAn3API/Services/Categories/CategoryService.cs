@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Services.Categories
+namespace DoAn3API.Services.Categories
 {
     public class CategoryService : ICategoryService
     {

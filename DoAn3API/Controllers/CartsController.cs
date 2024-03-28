@@ -25,7 +25,7 @@ namespace DoAn3API.Controllers.Catalog
         }
 
         // GET: api/<CartsController>
-        [Authorize(Contanst.NamePermissions.Carts.View)]
+        [Authorize(Constant.NamePermissions.Carts.View)]
         [HttpGet("GetListCart")]
         public async Task<IActionResult> GetListCart()
         {
@@ -51,7 +51,7 @@ namespace DoAn3API.Controllers.Catalog
         }
 
         // POST api/<CartsController>
-        [Authorize(Contanst.NamePermissions.Carts.Create)]
+        [Authorize(Constant.NamePermissions.Carts.Create)]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateCartItemDto createCartItemDto)
         {
@@ -68,7 +68,7 @@ namespace DoAn3API.Controllers.Catalog
             return Ok(listCart);
         }
 
-        [Authorize(Contanst.NamePermissions.Carts.Edit)]
+        [Authorize(Constant.NamePermissions.Carts.Edit)]
         [HttpPost("UpdateOrRemoveCartItem")]
         public async Task<IActionResult> UpdateOrRemoveCartItem( [FromBody] List<UpdateCartItemDto> cartItemDtos)
         {
@@ -84,7 +84,7 @@ namespace DoAn3API.Controllers.Catalog
             }
         }
 
-        [Authorize(Contanst.NamePermissions.Carts.Edit)]
+        [Authorize(Constant.NamePermissions.Carts.Edit)]
         [HttpPost("UpdateItem")]
         public async Task<IActionResult> UpdateItem([FromBody] UpdateCartItemDto cartItemDtos)
         {
@@ -106,7 +106,7 @@ namespace DoAn3API.Controllers.Catalog
         {
         }
 
-        [Authorize(Contanst.NamePermissions.Carts.View)]
+        [Authorize(Constant.NamePermissions.Carts.View)]
         // GET: api/<CartsController>
         [HttpGet("GetListCartItemChecked")]
         public async Task<IActionResult> GetListCartItemChecked()
