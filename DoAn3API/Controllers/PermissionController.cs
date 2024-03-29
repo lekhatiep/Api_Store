@@ -43,6 +43,36 @@ namespace DoAn3API.Controllers
             }
         }
 
+        [HttpGet("GetPermissionByRoleID")]
+        public async Task<ActionResult> GetPermissionByRoleID(int id)
+        {
+            try
+            {
+                var rs = await _permissionService.GetAllPermissionByRoleId(id);
+                return Ok(rs);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("GetPermissionByRoleName")]
+        public async Task<ActionResult> GetPermissionByRoleName(string name)
+        {
+            try
+            {
+                var rs = await _permissionService.GetAllPermissionByRoleName(name);
+                return Ok(rs);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+        }
+
         // GET api/<PermissionController>/5
         [HttpGet("{id}")]
         public string Get(int id)
