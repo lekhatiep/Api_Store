@@ -1,4 +1,4 @@
-﻿namespace Api.Contanst.Catalogs
+﻿namespace DoAn3API.Constants.Catalogs
 {
     public static class CatalogConst
     {

@@ -1,10 +1,11 @@
-﻿using DoAn3API.Contanst;
+﻿using AutoMapper;
+using DoAn3API.Constants;
 using DoAn3API.Dtos.ProductImages;
 using DoAn3API.Dtos.Products;
 using DoAn3API.Extensions;
 using DoAn3API.Services.Categories;
+using DoAn3API.Services.Firebase;
 using DoAn3API.Services.StoreService;
-using AutoMapper;
 using Domain.Common.Paging;
 using Domain.Entities.Catalog;
 using Infastructure.Repositories.Catalogs.ProductCategoryRepo;
@@ -14,15 +15,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Api.Services.Products
+namespace DoAn3API.Services.Products
 {
     public class ProductService : IProductService
     {
@@ -32,13 +30,17 @@ namespace Api.Services.Products
         private readonly IStorageService _storageService;
         private readonly ICategoryService _categoryService;
         private readonly IProductCategoryRepository _productCategoryRepository;
+        private readonly IFirebaseService _firebaseService;
+
         public ProductService(
             IProductRepository productRepository,
             IProductImageRepository productImageRepository,
             IMapper mapper,
             IStorageService storageService,
             ICategoryService categoryService,
-            IProductCategoryRepository productCategoryRepository)
+            IProductCategoryRepository productCategoryRepository,
+            IFirebaseService firebaseService
+            )
         {
             _productRepository = productRepository;
             _productImageRepository = productImageRepository;
@@ -46,6 +48,7 @@ namespace Api.Services.Products
             _storageService = storageService;
             _categoryService = categoryService;
             _productCategoryRepository = productCategoryRepository;
+            _firebaseService = firebaseService;
         }
 
         public async Task<int> CreateProduct(CreateProductDto productDto)
@@ -65,7 +68,8 @@ namespace Api.Services.Products
                         IsDefault = true,
                         SortOrder = 1,
                         FileSize = productDto.ThumbnailImage.Length,
-                        ImagePath = await this.SaveFile(productDto.ThumbnailImage)
+                        //ImagePath = await this.SaveFile(productDto.ThumbnailImage)
+                        ImagePath = await _firebaseService.UploadFileAsync(productDto.ThumbnailImage)
                     }
 
                 };
@@ -143,7 +147,7 @@ namespace Api.Services.Products
                 if (thumbnailImage != null)
                 {
                     thumbnailImage.FileSize = updateProductDto.ThumbnailImage.Length;
-                    thumbnailImage.ImagePath = await SaveFile(updateProductDto.ThumbnailImage);
+                    thumbnailImage.ImagePath = await _firebaseService.UploadFileAsync(updateProductDto.ThumbnailImage);
 
                     await _productImageRepository.Update(thumbnailImage, thumbnailImage.Id);
                 }

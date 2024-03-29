@@ -21,9 +21,6 @@ namespace DoAn3API.Services.Authenticate
 {
     public class AuthenticateService : IAuthenticateService
     {
-        string SECRET_KEY = "KeyOfMyshop10121994"; // in appsettings.json
-
-
         private readonly IUserRepository _userRepository;
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;

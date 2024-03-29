@@ -3,7 +3,7 @@ using Domain.Common.Paging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Api.Services.Products
+namespace DoAn3API.Services.Products
 {
     public interface IProductService
     {

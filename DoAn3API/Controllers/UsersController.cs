@@ -19,8 +19,8 @@ namespace DoAn3API.Controllers.Identity
     {
         private readonly IMapper _mapper;
         private readonly IAuthenticateService _authenticateService;
-        //private readonly IUserService _userService;
-        //private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserService _userService;
+        private readonly IHttpContextAccessor _httpContext;
         public UsersController(
             IMapper mapper, 
             IAuthenticateService authenticateService,
@@ -29,8 +29,8 @@ namespace DoAn3API.Controllers.Identity
         {
             _mapper = mapper;
             _authenticateService = authenticateService;
-           // _userService = userService;
-           // _httpContext = httpContext;
+            _userService = userService;
+            _httpContext = httpContext;
         }
 
         [HttpPost]
@@ -85,47 +85,47 @@ namespace DoAn3API.Controllers.Identity
             }           
         }
 
-        //[Authorize("Permission.User.Get")]
-        //[HttpGet]
-        //[Route("GetInfo")]
-        //public async Task<IActionResult> GetInfoUser()
-        //{     
-        //    try
-        //    {
-        //        var identity = _httpContext.HttpContext.User.Identity as ClaimsIdentity;
-        //        var id = int.Parse(identity.FindFirst("id").Value);
-        //        var user = await _userService.GetUserById(id);     
-                   
-        //        return Ok(_mapper.Map<UserDto>(user));
-        //    }
-        //    catch (Exception e)
-        //    {
+        [Authorize("Permission.User.Get")]
+        [HttpGet]
+        [Route("GetInfo")]
+        public async Task<IActionResult> GetInfoUser()
+        {
+            try
+            {
+                var identity = _httpContext.HttpContext.User.Identity as ClaimsIdentity;
+                var id = int.Parse(identity.FindFirst("id").Value);
+                var user = await _userService.GetUserById(id);
 
-        //        return BadRequest(new ResponseResult<string>(e.Message));
-        //    }
-           
-        //}
+                return Ok(_mapper.Map<UserDto>(user));
+            }
+            catch (Exception e)
+            {
 
-        //[AllowAnonymous]
-        //[HttpPost]
-        //[Route("validateToken")]
-        //public IActionResult ValidateToken([FromHeader] string accessToken)
-        //{
-           
-        //    try
-        //    {
-        //        var isValid = JwtToken.ValidateToken(accessToken);
-        //        if (!isValid)
-        //            return BadRequest();
-        //        return Ok();
-        //    }
-        //    catch (Exception e)
-        //    {
+                return BadRequest(new ResponseResult<string>(e.Message));
+            }
 
-        //        return BadRequest(new ResponseResult<string>(e.Message));
-        //    }
+        }
 
-        //}
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("validateToken")]
+        public IActionResult ValidateToken([FromHeader] string accessToken)
+        {
+
+            try
+            {
+                var isValid = JwtToken.ValidateToken(accessToken);
+                if (!isValid)
+                    return BadRequest();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(new ResponseResult<string>(e.Message));
+            }
+
+        }
 
         //[Authorize("Permission.User.Get")]
         //[Route("GetUserPermission/{userId}")]
@@ -136,7 +136,7 @@ namespace DoAn3API.Controllers.Identity
         //    try
         //    {
         //        var permissions = await _userService.GetAllPermissionByUserId(userId);
-                
+
         //        return Ok(permissions);
         //    }
         //    catch (Exception e)
@@ -164,7 +164,7 @@ namespace DoAn3API.Controllers.Identity
         //        var rs = await _userService.IsExistsUser(tempCreateUserDto);
 
         //        return Ok(rs);
-                
+
         //    }
         //    catch (Exception e)
         //    {
