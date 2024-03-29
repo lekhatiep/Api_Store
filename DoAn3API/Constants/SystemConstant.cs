@@ -1,4 +1,4 @@
-﻿namespace DoAn3API.Constant
+﻿namespace DoAn3API.Constants
 {
     public class SystemConstant
     {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DoAn3API.Constant.Catalogs;
+using DoAn3API.Constants.Catalogs;
 using DoAn3API.Dtos.CartItems;
 using DoAn3API.Dtos.Carts;
 using DoAn3API.Services.Users;

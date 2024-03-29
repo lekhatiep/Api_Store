@@ -1,6 +1,8 @@
+using DoAn3API.DataContext;
 using DoAn3API.Services.Authenticate;
 using DoAn3API.Services.Categories;
 using DoAn3API.Services.Firebase;
+using DoAn3API.Services.Permissions;
 using DoAn3API.Services.Products;
 using DoAn3API.Services.Roles;
 using DoAn3API.Services.StoreService;
@@ -9,6 +11,7 @@ using Infastructure.Data;
 using Infastructure.Repositories;
 using Infastructure.Repositories.Catalogs.CategoryRepo;
 using Infastructure.Repositories.Catalogs.ProductCategoryRepo;
+using Infastructure.Repositories.PermissionRepo;
 using Infastructure.Repositories.ProductImageRepo;
 using Infastructure.Repositories.ProductRepo;
 using Infastructure.Repositories.RoleRepo;
@@ -40,6 +43,7 @@ namespace DoAn3API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<DapperContext>();
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
@@ -123,6 +127,10 @@ namespace DoAn3API
 
             services.AddScoped<IStorageService, FileStorageService>();
             services.AddScoped<IFirebaseService, FirebaseService>();
+
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+            services.AddScoped<IPermissionService, PermissionService>();
+
 
 
 

@@ -1,9 +1,8 @@
-﻿
-
-using AutoMapper;
-using DoAn3API.CustomAuthorize;
+﻿using AutoMapper;
+using DoAn3API.Authorize.CustomAuthorize;
 using DoAn3API.Dtos.Products;
 using DoAn3API.Services.Products;
+using DoAn3API.Constants;
 using Domain.Common.Paging;
 using Domain.Common.Wrappers;
 using Domain.Entities.Catalog;
@@ -20,7 +19,7 @@ using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Api.Controllers.Catalog
+namespace DoAn3API.Controllers.Catalog
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -94,7 +93,7 @@ namespace Api.Controllers.Catalog
             return Ok(_mapper.Map<ProductDto>(product));
         }
 
-        [Authorize("Permission.Product.Get")]
+        [CustomAuthorize(NamePermissions.Product.View)]
         [HttpGet("admin/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -117,7 +116,7 @@ namespace Api.Controllers.Catalog
 
         // POST api/<ProductsController>
         [HttpPost]
-        [CustomAuthorize("Permission.Product.Create")]
+        [CustomAuthorize(NamePermissions.Product.Create)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromForm] CreateProductDto createProductDto)
@@ -136,7 +135,7 @@ namespace Api.Controllers.Catalog
 
         // PUT api/<ProductsController>/5
         [HttpPut("{id}")]
-        [Authorize("Permission.Product.Update")]
+        [CustomAuthorize(NamePermissions.Product.Edit)]
         public async Task<IActionResult> Put(int id, [FromForm] UpdateProductDto productDto)
         {
             if (id < 0)
@@ -249,21 +248,6 @@ namespace Api.Controllers.Catalog
             {
                 return BadRequest(new ResponseResult<object>(e.Message));
             }
-        }
-
-        [HttpGet("updateSEO")]
-        public async Task<IActionResult> updateSEO()
-        {
-            var products = await _productService.GetAllProduct();
-
-            foreach (var item in products)
-            {
-                var productUpdateDto = _mapper.Map<UpdateProductDto>(item);
-                await _productService.UpdateSEOTitle(productUpdateDto);
-            }
-
-
-            return Ok();
         }
     }
 }

@@ -38,5 +38,10 @@ namespace DoAn3API.Services.Roles
             await _userRoleRepository.Insert(userRole);
             await _userRoleRepository.Save();
         }
+
+        public Task ListRole()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

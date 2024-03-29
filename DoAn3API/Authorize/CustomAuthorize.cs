@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace DoAn3API.CustomAuthorize
+namespace DoAn3API.Authorize.CustomAuthorize
 {
     public class CustomAuthorize : AuthorizeAttribute, IAuthorizationFilter
     {

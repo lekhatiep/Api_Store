@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DoAn3API.Constant;
+using DoAn3API.Constants;
 using DoAn3API.Dtos.ProductImages;
 using DoAn3API.Dtos.Products;
 using DoAn3API.Extensions;

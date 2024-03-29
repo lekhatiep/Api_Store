@@ -4,6 +4,11 @@ namespace DoAn3API.Dtos.Products
 {
     public class ProductPagedRequestDto : PagedRequestBase
     {
+        public ProductPagedRequestDto()
+        {
+            PageSize = 10;
+            PageNumber = 1;
+        }
         //Sorting
 
         public string SortBy { get; set; }
