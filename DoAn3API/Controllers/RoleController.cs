@@ -1,4 +1,6 @@
-﻿using DoAn3API.Services.Roles;
+﻿using DoAn3API.Authorize.CustomAuthorize;
+using DoAn3API.Constants;
+using DoAn3API.Services.Roles;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,7 @@ namespace DoAn3API.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        [CustomAuthorize(NamePermissions.Role.View)]
         [HttpGet("GetListRole")]
         public async Task<ActionResult> GetListRole()
         {
@@ -51,6 +54,7 @@ namespace DoAn3API.Controllers
         }
 
         // POST api/<RoleController>
+        [CustomAuthorize(NamePermissions.Role.Assign)]
         [HttpPost("AddPermissionToRole")]
         public async Task<ActionResult> AddPermissionToRole(int roleID, [FromBody] List<int> permissionIDs)
         {
@@ -73,6 +77,7 @@ namespace DoAn3API.Controllers
         }
 
         // DELETE api/<RoleController>/5
+        [CustomAuthorize(NamePermissions.Role.Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int roleID)
         {

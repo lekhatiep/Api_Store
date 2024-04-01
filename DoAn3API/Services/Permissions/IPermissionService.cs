@@ -13,5 +13,6 @@ namespace DoAn3API.Services.Permissions
         Task<List<PermissionDto>> GetAllPermission();
         Task<int> AddNewPermission(string Name);
         Task DeletePermission(int Id);
+        Task SyncNamePermission();
     }
 }

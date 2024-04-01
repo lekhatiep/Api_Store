@@ -87,14 +87,14 @@ namespace DoAn3API.Services.Roles
                 using (var connection = _dapperContext.CreateConnection())
                 {
                     var existingPermissionIds = await connection.QueryAsync<int>(
-                           "SELECT ID FROM permission WHERE ID IN @PermissionIds",
+                           "SELECT ID FROM permissions WHERE ID IN @PermissionIds",
                            new { PermissionIds = permissionIds }
                        );
 
                     var newPermissionIds = permissionIds.Except(existingPermissionIds);
 
                     var sql = @"INSERT INTO RolePermissions (roleID, permissionID)
-                                SELECT @RoleId, ID FROM permission WHERE ID IN @NewPermissionIds";
+                                SELECT @RoleId, ID FROM permissions WHERE ID IN @NewPermissionIds";
 
                      await connection.ExecuteAsync(sql,
                         new { RoleId = roleID, PermissionIds = newPermissionIds }
@@ -116,7 +116,7 @@ namespace DoAn3API.Services.Roles
                 using (var connection = _dapperContext.CreateConnection())
                 {
                    await connection.ExecuteAsync("DELETE FROM role WHERE id = @RoleId", new { RoleId = roleID });
-                   await connection.ExecuteAsync("DELETE FROM RolePermissions WHERE id = @RoleId", new { RoleId = roleID });
+                   await connection.ExecuteAsync("DELETE FROM RolePermissions WHERE RoleID = @RoleId", new { RoleId = roleID });
                 }
             }
             catch (Exception)

@@ -32,6 +32,15 @@
             public const string Create = "Role.Create";
             public const string Edit = "Role.Edit";
             public const string Delete = "Role.Delete";
+            public const string Assign = "Role.Assign";
+        }
+
+        public static class Permission
+        {
+            public const string View = "Permission.View";
+            public const string Create = "Permission.Create";
+            public const string Edit = "Permission.Edit";
+            public const string Delete = "Permission.Delete";
         }
     }
 }
