@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using DoAn3API.Authorize.CustomAuthorize;
+using DoAn3API.Constants;
 using DoAn3API.Dtos.Identity;
 using DoAn3API.Helper;
 using DoAn3API.Services.Authenticate;
@@ -85,7 +87,7 @@ namespace DoAn3API.Controllers.Identity
             }           
         }
 
-        [Authorize("Permission.User.Get")]
+        [CustomAuthorize(NamePermissions.User.View)]
         [HttpGet]
         [Route("GetInfo")]
         public async Task<IActionResult> GetInfoUser()
@@ -127,51 +129,52 @@ namespace DoAn3API.Controllers.Identity
 
         }
 
-        //[Authorize("Permission.User.Get")]
-        //[Route("GetUserPermission/{userId}")]
-        //[HttpGet]
-        //public async Task<IActionResult> GetUserPermission(int userId)
-        //{
+        [CustomAuthorize(NamePermissions.User.View)]
+        [Route("GetUserPermission/{userId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetUserPermission(int userId)
+        {
 
-        //    try
-        //    {
-        //        var permissions = await _userService.GetAllPermissionByUserId(userId);
+            try
+            {
+                var permissions = await _userService.GetAllPermissionByUserId(userId);
 
-        //        return Ok(permissions);
-        //    }
-        //    catch (Exception e)
-        //    {
+                return Ok(permissions);
+            }
+            catch (Exception e)
+            {
 
-        //        return BadRequest(new ResponseResult<string>(e.Message));
-        //    }
+                return BadRequest(new ResponseResult<string>(e.Message));
+            }
 
-        //}
+        }
 
-        //[Route("CheckEmailExists")]
-        //[HttpGet]
-        //public async Task<IActionResult> CheckEmailExists(string email)
-        //{
+        [Route("CheckEmailExists")]
+        [HttpGet]
+        public async Task<IActionResult> CheckEmailExists(string email)
+        {
 
-        //    try
-        //    {
-        //        var tempCreateUserDto = new CreateUserDto() {
-        //            Email = email,
-        //            Password = string.Empty,
-        //            Phone = string.Empty,
-        //            UserName = string.Empty
+            try
+            {
+                var tempCreateUserDto = new CreateUserDto()
+                {
+                    Email = email,
+                    Password = string.Empty,
+                    Phone = string.Empty,
+                    UserName = string.Empty
 
-        //        };
-        //        var rs = await _userService.IsExistsUser(tempCreateUserDto);
+                };
+                var rs = await _userService.IsExistsUser(tempCreateUserDto);
 
-        //        return Ok(rs);
+                return Ok(rs);
 
-        //    }
-        //    catch (Exception e)
-        //    {
+            }
+            catch (Exception e)
+            {
 
-        //        return BadRequest(new ResponseResult<string>(e.Message));
-        //    }
+                return BadRequest(new ResponseResult<string>(e.Message));
+            }
 
-        //}
+        }
     }
 }

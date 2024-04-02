@@ -93,7 +93,7 @@ namespace DoAn3API.Services.Roles
 
                     var newPermissionIds = permissionIds.Except(existingPermissionIds);
 
-                    var sql = @"INSERT INTO RolePermissions (roleID, permissionID)
+                    var sql = @"INSERT INTO RolePermissions (roleID, permissionID) 
                                 SELECT @RoleId, ID FROM permissions WHERE ID IN @NewPermissionIds";
 
                      await connection.ExecuteAsync(sql,
