@@ -7,6 +7,7 @@ namespace DoAn3API.Dtos.Identity
 {
     public class RoleDto
     {
+        public int ID { get; set; }
         public string Name { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Dapper;
+using DoAn3API.DataContext;
 using DoAn3API.Dtos.Categories;
 using DoAn3API.Dtos.Products;
 using DoAn3API.Services.Categories;
@@ -20,18 +22,22 @@ namespace DoAn3API.Services.Categories
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;
         private readonly IProductCategoryRepository _productCategoryRepository;
+        private readonly DapperContext _dapperContext;
         private readonly IMapper _mapper;
 
         public CategoryService(
             IMapper mapper,
             IProductRepository productRepository,
             ICategoryRepository categoryRepository, 
-            IProductCategoryRepository productCategoryRepository)
+            IProductCategoryRepository productCategoryRepository,
+            DapperContext dapperContext
+            )
         {
             _mapper = mapper;
             _categoryRepository = categoryRepository;
             _productCategoryRepository = productCategoryRepository;
             _productRepository = productRepository;
+            _dapperContext = dapperContext;
         }
  
 
@@ -43,7 +49,6 @@ namespace DoAn3API.Services.Categories
             //List category
 
             var listCategory = queryCategory
-                .Where(x => x.ProductCategories.Any(p => p.CategoryId == x.Id))
                 .Where(x => x.IsDelete == false);
             var data = PagedList<Category>.ToPagedList(ref listCategory, pagedCategoryRequest.PageNumber, pagedCategoryRequest.PageSize);
 
@@ -90,6 +95,63 @@ namespace DoAn3API.Services.Categories
                 
             }
             await _productCategoryRepository.Save();
+        }
+
+        public async Task UpdateCategoryOfProduct(int productID, List<int> CatIDs)
+        {
+            var product = await _productRepository.List().Where(x => x.Id == productID && x.IsDelete == false).FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return;
+            }
+
+            if (CatIDs.Count > 0)
+            {
+
+                using(var con = _dapperContext.CreateConnection())
+                {
+                    var sql = @"DELETE ProductCategories WHERE ProductId = @ProductId
+                                INSERT INTO ProductCategories (ProductId, CategoryId) 
+                                SELECT @ProductId, Id FROM Categories WHERE Id IN @CategoryIds";
+
+                    await con.ExecuteAsync(sql, new { ProductId = productID, CategoryIds = CatIDs });
+                }
+            }
+
+        }
+
+        public async Task AddNewCategory(CreateCategoryDto createCategoryDto)
+        {
+            try
+            {
+                var newCat = _mapper.Map<Category>(createCategoryDto);
+                await _categoryRepository.Insert(newCat);
+                await _categoryRepository.Save();
+            }
+            catch (Exception )
+            {
+
+                throw;
+            }
+ 
+        }
+
+        public async Task DeleteCategory(int catID)
+        {
+            try
+            {
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    await connection.ExecuteAsync("DELETE FROM Categories WHERE id = @catID", new { catID = catID });
+                    await connection.ExecuteAsync("DELETE FROM ProductCategories WHERE CategoryId = @catID", new { catID = catID });
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

@@ -32,6 +32,39 @@
             public const string Create = "Role.Create";
             public const string Edit = "Role.Edit";
             public const string Delete = "Role.Delete";
+            public const string Assign = "Role.Assign";
+        }
+
+        public static class Permission
+        {
+            public const string View = "Permission.View";
+            public const string Create = "Permission.Create";
+            public const string Edit = "Permission.Edit";
+            public const string Delete = "Permission.Delete";
+        }
+
+        public static class User
+        {
+            public const string View = "User.View";
+            public const string Create = "User.Create";
+            public const string Edit = "User.Edit";
+            public const string Delete = "User.Delete";
+        }
+
+        public static class Category
+        {
+            public const string View = "Category.View";
+            public const string Create = "Category.Create";
+            public const string Edit = "Category.Edit";
+            public const string Delete = "Category.Delete";
+        }
+
+        public static class Order
+        {
+            public const string View = "Order.View";
+            public const string Create = "Order.Create";
+            public const string Edit = "Order.Edit";
+            public const string Delete = "Order.Delete";
         }
     }
 }
