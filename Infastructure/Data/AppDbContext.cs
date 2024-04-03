@@ -30,6 +30,8 @@ namespace Infastructure.Data
         public DbSet<Permission> Permissions { get; set; }
 
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
     }
 }
