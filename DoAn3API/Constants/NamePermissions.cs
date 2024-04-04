@@ -58,13 +58,5 @@
             public const string Edit = "Category.Edit";
             public const string Delete = "Category.Delete";
         }
-
-        public static class Order
-        {
-            public const string View = "Order.View";
-            public const string Create = "Order.Create";
-            public const string Edit = "Order.Edit";
-            public const string Delete = "Order.Delete";
-        }
     }
 }
