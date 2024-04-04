@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DoAn3API.Services.Carts
@@ -162,7 +163,8 @@ namespace DoAn3API.Services.Carts
 
         public async Task<List<CartItemDto>> UpdateOrRemoveCartItem(List<UpdateCartItemDto> updateCartItemDtos)
         {
-            var userId = (int)httpContextAccessor.HttpContext.Items["Id"];
+            var identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
             var cart = await GetCartUserById(userId);
             var listCartItems = await _cartItemRepository.List().Where(x => x.CartId == cart.Id).ToListAsync();
 

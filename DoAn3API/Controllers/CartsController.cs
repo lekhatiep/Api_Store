@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -30,8 +31,11 @@ namespace DoAn3API.Controllers.Catalog
         [HttpGet("GetListCart")]
         public async Task<IActionResult> GetListCart()
         {
-            var userId = (int)_httpContextAccessor.HttpContext.Items["Id"];
-            var cart = await _cartService.GetCartUserById(userId); //Admin
+            var identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
+
+            var cart = await _cartService.GetCartUserById(userId);
+
             if (cart == null)
             {
                 return Ok(new List<CartItemDto>());
@@ -61,7 +65,9 @@ namespace DoAn3API.Controllers.Catalog
                 return BadRequest(ModelState.Values);
             }
 
-            var userId = (int)_httpContextAccessor.HttpContext.Items["Id"];
+            var identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
+
             await _cartService.AddToCart(createCartItemDto);
             var cart = await _cartService.GetCartUserById(userId); //Admin
             var listCart = await _cartService.GetUserListCartItem(cart.Id);
@@ -85,7 +91,7 @@ namespace DoAn3API.Controllers.Catalog
             }
         }
 
-        [Authorize(Constants.NamePermissions.Carts.Edit)]
+        [CustomAuthorize(Constants.NamePermissions.Carts.Edit)]
         [HttpPost("UpdateItem")]
         public async Task<IActionResult> UpdateItem([FromBody] UpdateCartItemDto cartItemDtos)
         {
@@ -112,7 +118,9 @@ namespace DoAn3API.Controllers.Catalog
         [HttpGet("GetListCartItemChecked")]
         public async Task<IActionResult> GetListCartItemChecked()
         {
-            var userId = (int)_httpContextAccessor.HttpContext.Items["Id"];
+            var identity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
+
             var cart = await _cartService.GetCartUserById(userId); //Admin
             if (cart == null)
             {

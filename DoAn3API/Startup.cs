@@ -1,7 +1,9 @@
 using DoAn3API.DataContext;
 using DoAn3API.Services.Authenticate;
+using DoAn3API.Services.Carts;
 using DoAn3API.Services.Categories;
 using DoAn3API.Services.Firebase;
+using DoAn3API.Services.Orders;
 using DoAn3API.Services.Permissions;
 using DoAn3API.Services.Products;
 using DoAn3API.Services.Roles;
@@ -9,7 +11,11 @@ using DoAn3API.Services.StoreService;
 using DoAn3API.Services.Users;
 using Infastructure.Data;
 using Infastructure.Repositories;
+using Infastructure.Repositories.Catalogs.CartItemRepos;
+using Infastructure.Repositories.Catalogs.CartRepos;
 using Infastructure.Repositories.Catalogs.CategoryRepo;
+using Infastructure.Repositories.Catalogs.OrderItemRepos;
+using Infastructure.Repositories.Catalogs.OrderRepos;
 using Infastructure.Repositories.Catalogs.ProductCategoryRepo;
 using Infastructure.Repositories.PermissionRepo;
 using Infastructure.Repositories.ProductImageRepo;
@@ -130,6 +136,15 @@ namespace DoAn3API
 
             services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<IPermissionService, PermissionService>();
+
+            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<ICartItemRepository, CartItemRepository>();
+
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+           
 
 
 
