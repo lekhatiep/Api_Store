@@ -3,6 +3,8 @@ using DoAn3API.Constants;
 using DoAn3API.Dtos.OrderItems;
 using DoAn3API.Dtos.Orders;
 using DoAn3API.Services.Orders;
+using Domain.Common.Paging;
+using Domain.Common.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +33,7 @@ namespace DoAn3API.Controllers.Catalog
         // GET: api/<OrdersController>
         [CustomAuthorize(NamePermissions.Orders.View)]
         [HttpGet("HistoryOrderByUser")]
-        public async Task<IActionResult> HistoryOrderByUser(string status)
+        public async Task<IActionResult> HistoryOrderByUser(int status)
         {
             try
             {
@@ -69,10 +71,56 @@ namespace DoAn3API.Controllers.Catalog
             }
         }
 
+        [CustomAuthorize(NamePermissions.Orders.Admin_Order_View)]
+        [HttpGet("GetListOderPaging")]
+        public IActionResult GetListOderPaging([FromQuery] PagedOrderRequestDto requestDto)
+        {
+            try
+            {
+                var listOrder = _orderService.GetListOderPaging(requestDto);
+
+                return Ok(new PagedReponse<PagedList<OrderDto>>(listOrder)
+                {
+
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new ResponseResult<object>(e.Message));
+            }
+            
+        }
+
+        [CustomAuthorize(NamePermissions.Orders.Admin_Order_View)]
+        [HttpGet("GetDetailOrder")]
+        public  async Task<IActionResult> GetDetailOrder(int id)
+        {
+            try
+            {
+                var listOrder = await _orderService.GetDetailOrder(id);
+
+                return Ok(listOrder);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+
+        }
+
         // PUT api/<OrdersController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> UpdateStatusOrder(int id, [FromBody] int status)
         {
+            try
+            {
+                await _orderService.UpdateStatusOrder(id, status);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE api/<OrdersController>/5

@@ -16,7 +16,7 @@ namespace Domain.Entities.Catalog
 
         public string Token { get; set; }
 
-        public string Status { get; set; }
+        public int Status { get; set; }
 
         public double SubTotal { get; set; }
 

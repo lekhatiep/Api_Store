@@ -10,10 +10,13 @@
 
         public class OrderStatus
         {
-            public const string InComplete = "InComplete";
-            public const string Complete = "Complete";
-            public const string Processing = "Processing";
-
+            public const int Processing = 1;
+            public const int Verify = 2;
+            public const int Delivering = 3;
+            public const int Completed = 4;
+            public const int Cancel = 5;
         }
+
+
     }
 }
