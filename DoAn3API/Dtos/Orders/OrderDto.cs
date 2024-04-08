@@ -14,6 +14,8 @@ namespace DoAn3API.Dtos.Orders
 
         public int UserId { get; set; }
 
+        public string UserName { get; set; }
+
         public double GrandTotal { get; set; }
 
         public string Status { get; set; }

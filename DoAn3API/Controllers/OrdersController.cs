@@ -61,8 +61,8 @@ namespace DoAn3API.Controllers.Catalog
 
             try
             {
-                await _orderService.ProcessCheckoutOrder(create.UserId);
-                return Ok();
+                var rs = await _orderService.ProcessCheckoutOrder(create.UserId);
+                return Ok(rs);
             }
             catch (Exception e)
             {
@@ -109,7 +109,7 @@ namespace DoAn3API.Controllers.Catalog
         }
 
         // PUT api/<OrdersController>/5
-        [HttpPut("{id}")]
+        [HttpPut("UpdateStatusOrder/{id}")]
         public async Task<IActionResult> UpdateStatusOrder(int id, [FromBody] int status)
         {
             try

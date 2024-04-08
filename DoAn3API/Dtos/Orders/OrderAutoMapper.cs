@@ -10,7 +10,10 @@ namespace DoAn3API.Dtos.Orders
         public OrderAutoMapper()
         {
             CreateMap<PagedList<Order>, PagedList<OrderDto>>()
-                .ConvertUsing<PagedListTypeConverter<Order, OrderDto>>();
+
+                .ConvertUsing<ListOrderPagedListTypeConverterITypeConverter<Order, OrderDto>>();
+
+
         }
     }
 }

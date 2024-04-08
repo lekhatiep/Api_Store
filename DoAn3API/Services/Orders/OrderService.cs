@@ -127,6 +127,12 @@ namespace DoAn3API.Services.Orders
         public async Task<int> ProcessCheckoutOrder(int userId)
         {
             var cart = await _cartService.GetCartUserById(userId);
+
+            if (cart == null)
+            {
+                return -1;
+
+            }
             var listCart = await _cartService.GetUserListCartItemIsOrder(cart.Id);
 
             var orderItems = new List<OrderItemDto>();
@@ -159,7 +165,7 @@ namespace DoAn3API.Services.Orders
             createOrderDto.GrandTotal = (total + shipping - discountShop);
 
             var order = _mapper.Map<Order>(createOrderDto);
-            order.Status = CatalogConst.OrderStatus.Processing;
+            order.Status = CatalogConst.OrderStatus.Verify;
             order.OrderItems = _mapper.Map<List<OrderItem>>(orderItems);
             order.UserId = cart.UserId;
             order.CreateTime = DateTime.Now;
@@ -201,7 +207,7 @@ namespace DoAn3API.Services.Orders
         public PagedList<OrderDto> GetListOderPaging(PagedOrderRequestDto pagedOrderRequest)
         {
             //Query
-            var queryCategory = _orderRepository.List();
+            var queryCategory = _orderRepository.List().Include(x => x.User);
 
             //List category
 
@@ -261,14 +267,23 @@ namespace DoAn3API.Services.Orders
             {
                 return 0;
             }
-            using (var con = _dapperContext.CreateConnection())
+            try
             {
-                var sql = $@"UPDATE Orders SET Status = {status} WHERE OrderId = {orderID}";
+                using (var con = _dapperContext.CreateConnection())
+                {
+                    var sql = $@"UPDATE Orders SET Status = {status} WHERE Id = {orderID}";
 
-                await con.ExecuteAsync(sql);
+                    await con.ExecuteAsync(sql);
 
-                return 1;
+                    return 1;
+                }
             }
+            catch (Exception ex )
+            {
+
+                throw;
+            }
+           
         }
     }
 }
