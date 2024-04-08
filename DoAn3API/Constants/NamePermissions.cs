@@ -16,6 +16,9 @@
             public const string Create = "Orders.Create";
             public const string Edit = "Orders.Edit";
             public const string Delete = "Orders.Delete";
+            public const string Admin_Order_Update = "Admin_Order_Update";
+            public const string Admin_Order_View= "Admin_Order_View";
+            public const string Admin_Order_Delete = "Admin_Order_Delete";
         }
 
         public static class Product

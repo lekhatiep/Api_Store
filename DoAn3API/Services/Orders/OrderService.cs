@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Dapper;
 using DoAn3API.Constants.Catalogs;
+using DoAn3API.DataContext;
 using DoAn3API.Dtos.OrderItems;
 using DoAn3API.Dtos.Orders;
 using DoAn3API.Services.Carts;
+using Domain.Common.Paging;
 using Domain.Entities.Catalog;
 using Infastructure.Repositories.Catalogs.CartRepos;
 using Infastructure.Repositories.Catalogs.OrderItemRepos;
@@ -24,6 +27,7 @@ namespace DoAn3API.Services.Orders
         private readonly IMapper _mapper;
         private readonly ICartService _cartService;
         private readonly ICartRepository _cartRepository;
+        private readonly DapperContext _dapperContext;
 
         public OrderService(
             IOrderRepository orderRepository,
@@ -31,7 +35,9 @@ namespace DoAn3API.Services.Orders
             ICartService cartService,
             ICartRepository cartRepository,
             IOrderItemRepository orderItemRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            DapperContext dapperContext
+            )
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -39,6 +45,7 @@ namespace DoAn3API.Services.Orders
             _cartRepository = cartRepository;
             _orderItemRepository = orderItemRepository;
             _productRepository = productRepository;
+            _dapperContext = dapperContext;
         }
 
       
@@ -66,7 +73,7 @@ namespace DoAn3API.Services.Orders
 
         }
 
-        public async Task<List<OrderItemDto>> GetListHistoryOrderByUser(int userId, string status)
+        public async Task<List<OrderItemDto>> GetListHistoryOrderByUser(int userId, int status)
         {
             var query = from o in _orderRepository.List()
                         join oi in _orderItemRepository.List() on o.Id equals oi.OrderId into oio
@@ -75,9 +82,9 @@ namespace DoAn3API.Services.Orders
                                     .Include(x => x.ProductImages.Where(x => x.IsDefault == true && x.IsDelete)) on oi.ProductId equals p.Id 
                         select new { o, oi, p };
 
-            if (status.ToLower().Contains("ALL"))
+            if (status == 0)
             {
-                status = string.Empty;
+                status = 0;
 
                 var queryAllOrderItem = await (from q in query
                                where q.o.UserId == userId && q.o.IsDelete == false 
@@ -99,7 +106,7 @@ namespace DoAn3API.Services.Orders
             }
 
             var queryOrderItem = await (from q in query where q.o.UserId == userId &&
-                                   q.o.Status.ToLower().Contains(status.ToLower().Trim()) && q.o.IsDelete == false
+                                   q.o.Status == status && q.o.IsDelete == false
                                    select new { q.oi, q.p })
 
                              .Select(x => new OrderItemDto
@@ -191,5 +198,77 @@ namespace DoAn3API.Services.Orders
             return 1;
         }
 
+        public PagedList<OrderDto> GetListOderPaging(PagedOrderRequestDto pagedOrderRequest)
+        {
+            //Query
+            var queryCategory = _orderRepository.List();
+
+            //List category
+
+            var listOrder = queryCategory
+                .Where(x => x.IsDelete == false);
+
+            if (pagedOrderRequest.SearchOrderID > 0)
+            {
+                listOrder = listOrder.Where(x => x.Id == pagedOrderRequest.SearchOrderID);
+            }
+            if (!string.IsNullOrEmpty(pagedOrderRequest.SortValue))
+            {
+                listOrder = listOrder.OrderBy(x => pagedOrderRequest.SortValue);
+            }
+
+            if (!string.IsNullOrEmpty(pagedOrderRequest.SortBy) && pagedOrderRequest.SortBy.ToLower() == "desc")
+            {
+                listOrder = listOrder.OrderByDescending(x => pagedOrderRequest.SortValue);
+            }
+
+            var data = PagedList<Order>.ToPagedList(ref listOrder, pagedOrderRequest.PageNumber, pagedOrderRequest.PageSize);
+
+            var dataResult = _mapper.Map<PagedList<OrderDto>>(data);
+
+            return dataResult;
+        }
+
+        public async Task<List<OrderItemDto>> GetDetailOrder(int orderID)
+        {
+            if (orderID <0)
+            {
+                return null;
+            }
+            try
+            {
+                using (var con = _dapperContext.CreateConnection())
+                {
+                    var sql = $@"SELECT oi.*,oi.Quantity * (oi.Price - oi.Discount) as Total, p.Title, pi.ImagePath as ImgPath FROM OrderItems oi
+	                            left join Products p on oi.ProductId = p.Id
+	                            left join ProductImage pi on p.id =  pi.ProductId
+	                            WHERE OrderId = {orderID}";
+
+                    var data = await con.QueryAsync<OrderItemDto>(sql);
+                    return data.ToList();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<int> UpdateStatusOrder(int orderID, int status)
+        {
+            if (orderID < 0)
+            {
+                return 0;
+            }
+            using (var con = _dapperContext.CreateConnection())
+            {
+                var sql = $@"UPDATE Orders SET Status = {status} WHERE OrderId = {orderID}";
+
+                await con.ExecuteAsync(sql);
+
+                return 1;
+            }
+        }
     }
 }
