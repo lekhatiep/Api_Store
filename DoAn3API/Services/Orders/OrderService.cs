@@ -80,6 +80,7 @@ namespace DoAn3API.Services.Orders
                         from oi in oio.DefaultIfEmpty()
                         join p in _productRepository.List()
                                     .Include(x => x.ProductImages.Where(x => x.IsDefault == true && x.IsDelete)) on oi.ProductId equals p.Id 
+                        orderby oi.CreateTime descending
                         select new { o, oi, p };
 
             if (status == 0)
