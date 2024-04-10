@@ -143,8 +143,30 @@ namespace DoAn3API.Services.Categories
             {
                 using (var connection = _dapperContext.CreateConnection())
                 {
-                    await connection.ExecuteAsync("DELETE FROM Categories WHERE id = @catID", new { catID = catID });
+                    await connection.ExecuteAsync("UPDATE Categories SET IsDelete=1 WHERE id = @catID", new { catID = catID });
                     await connection.ExecuteAsync("DELETE FROM ProductCategories WHERE CategoryId = @catID", new { catID = catID });
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<int> IsCatAssignProduct(int catId)
+        {
+            var result = 0;
+            try
+            {
+                using (var connection = _dapperContext.CreateConnection())
+                {
+                    var sql = "SELECT COUNT(1) FROM ProductCategories WHERE CategoryId = @catID";
+                    var data = await connection.QueryAsync<int>(sql, new { catID = catId });
+
+
+                    return data.FirstOrDefault() > 0 ? 1 : 0;
+                    
                 }
             }
             catch (Exception)
