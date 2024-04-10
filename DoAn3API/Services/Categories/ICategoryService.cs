@@ -18,5 +18,6 @@ namespace DoAn3API.Services.Categories
         Task AddNewCategory(CreateCategoryDto createCategoryDto);
         Task DeleteCategory(int catID);
         Task UpdateCategoryOfProduct(int productID, List<int> CatIDs);
+        Task<int> IsCatAssignProduct(int catId);
     }
 }

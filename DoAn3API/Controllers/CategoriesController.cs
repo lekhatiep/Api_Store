@@ -95,8 +95,8 @@ namespace DoAn3API.Controllers.Catalog
 
         // PUT api/<CategoriesController>/5
         [CustomAuthorize(NamePermissions.Category.Edit)]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdateCategoryDto updateCategoryDto)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] UpdateCategoryDto updateCategoryDto)
         {
             if (!ModelState.IsValid)
             {
@@ -105,7 +105,7 @@ namespace DoAn3API.Controllers.Catalog
 
             try
             {
-                var category = await _categoryRepository.GetById(id);
+                var category = await _categoryRepository.GetById(updateCategoryDto.Id);
 
                 category.ModifyTime = DateTime.Now;
 
@@ -149,6 +149,24 @@ namespace DoAn3API.Controllers.Catalog
                 await _categoryService.UpdateCategoryOfProduct(productID, CategoryIds);
 
                 return Ok();
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(new ResponseResult<object>(e.Message));
+            }
+        }
+
+        [CustomAuthorize(NamePermissions.Category.View)]
+        [HttpGet("IsCatAssignProduct")]
+        public async Task<IActionResult> IsCatAssignProduct(int catID)
+        {
+
+            try
+            {
+               var rs = await _categoryService.IsCatAssignProduct(catID);
+
+                return Ok(rs);
             }
             catch (Exception e)
             {
