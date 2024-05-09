@@ -228,9 +228,11 @@ namespace DoAn3API.Controllers.Catalog
         {
             try
             {
-                var listProduct = _productService.GetProductByName(requestDto);
-
-     
+                var listProduct = _productService.GetAllProductPaging(requestDto);
+                if (!string.IsNullOrEmpty(requestDto.Search))
+                {
+                    listProduct = _productService.GetProductByName(requestDto);
+                }
 
                 return Ok(new PagedReponse<List<ProductDto>>(listProduct)
                 {
@@ -248,6 +250,21 @@ namespace DoAn3API.Controllers.Catalog
             {
                 return BadRequest(new ResponseResult<object>(e.Message));
             }
+        }
+
+        [HttpGet("updateSEO")]
+        public async Task<IActionResult> updateSEO()
+        {
+            var products = await _productService.GetAllProduct();
+
+            foreach (var item in products)
+            {
+                var productUpdateDto = _mapper.Map<UpdateProductDto>(item);
+                await _productService.UpdateSEOTitle(productUpdateDto);
+            }
+
+
+            return Ok();
         }
     }
 }

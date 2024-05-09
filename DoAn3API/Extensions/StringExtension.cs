@@ -21,7 +21,13 @@ namespace DoAn3API.Extensions
                 }
             }
 
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+            string withoutDiacritics = stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+
+            // Đ và đ
+            withoutDiacritics = withoutDiacritics.Replace("Đ", "D");
+            withoutDiacritics = withoutDiacritics.Replace("đ", "d");
+
+            return withoutDiacritics;
         }
     }
 }

@@ -316,10 +316,9 @@ namespace DoAn3API.Services.Products
             var searchTextConvert = StringExtension.RemoveDiacritics(requestDto.Search);
 
              var listProduct = queryProduct
-                .Include(cat => cat.ProductCategories)
+                .Include(x => x.ProductImages.Where(x => x.IsDefault == true && x.IsDelete == false))
                 .Where(x => x.IsDelete == false
                      && x.SeoTitle.ToLower().Contains(searchTextConvert.ToLower())
-                     || x.SeoDescription.ToLower().Contains(searchTextConvert.ToLower())
                 );
 
 
@@ -347,8 +346,8 @@ namespace DoAn3API.Services.Products
                 throw new NotImplementedException();
             }
 
-            product.SeoTitle = StringExtension.RemoveDiacritics(product.Title);
-            product.SeoDescription = StringExtension.RemoveDiacritics(product.Description);
+            product.SeoTitle = StringExtension.RemoveDiacritics(product.Title ?? "");
+            product.SeoDescription = StringExtension.RemoveDiacritics(product.Description ?? "");
 
             await _productRepository.Update(product, product.Id);
 
