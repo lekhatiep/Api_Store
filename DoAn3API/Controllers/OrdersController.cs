@@ -81,7 +81,13 @@ namespace DoAn3API.Controllers.Catalog
 
                 return Ok(new PagedReponse<PagedList<OrderDto>>(listOrder)
                 {
-
+                    TotalRecord = listOrder.TotalCount,
+                    PageSize = listOrder.PageSize,
+                    TotalPages = listOrder.TotalPages,
+                    CurrentPage = listOrder.CurrentPage,
+                    HasNext = listOrder.HasNext,
+                    HasPrevious = listOrder.HasPrevious,
+                    PageNumber = requestDto.PageNumber
                 });
             }
             catch (Exception e)
