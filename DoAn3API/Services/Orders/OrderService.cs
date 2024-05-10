@@ -90,7 +90,7 @@ namespace DoAn3API.Services.Orders
                 var queryAllOrderItem = await (from q in query
                                where q.o.UserId == userId && q.o.IsDelete == false 
 
-                               select new { q.oi, q.p })
+                               select new { q.oi, q.p , q.o })
                                .Select(x => new OrderItemDto
                                {
                                    Id = x.oi.Id,
@@ -100,6 +100,7 @@ namespace DoAn3API.Services.Orders
                                    Price = x.oi.Price,
                                    Quantity = x.oi.Quantity,
                                    Total = x.oi.Quantity * Convert.ToDouble(x.p.Price),
+                                   Status = x.o.Status
 
                                }).ToListAsync(); ;
 
@@ -108,7 +109,7 @@ namespace DoAn3API.Services.Orders
 
             var queryOrderItem = await (from q in query where q.o.UserId == userId &&
                                    q.o.Status == status && q.o.IsDelete == false
-                                   select new { q.oi, q.p })
+                                   select new { q.oi, q.p ,q.o})
 
                              .Select(x => new OrderItemDto
                              {
@@ -119,7 +120,8 @@ namespace DoAn3API.Services.Orders
                                  Price = x.oi.Price,
                                  Quantity = x.oi.Quantity,
                                  Total = x.oi.Quantity * Convert.ToDouble(x.p.Price),
-        
+                                 Status = x.o.Status
+
                              }).ToListAsync();
 
             return queryOrderItem;
