@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Dapper;
 using DoAn3API.Constants;
+using DoAn3API.DataContext;
 using DoAn3API.Dtos.ProductImages;
 using DoAn3API.Dtos.Products;
 using DoAn3API.Extensions;
@@ -31,6 +33,7 @@ namespace DoAn3API.Services.Products
         private readonly ICategoryService _categoryService;
         private readonly IProductCategoryRepository _productCategoryRepository;
         private readonly IFirebaseService _firebaseService;
+        private readonly DapperContext _dapperContext;
 
         public ProductService(
             IProductRepository productRepository,
@@ -39,7 +42,8 @@ namespace DoAn3API.Services.Products
             IStorageService storageService,
             ICategoryService categoryService,
             IProductCategoryRepository productCategoryRepository,
-            IFirebaseService firebaseService
+            IFirebaseService firebaseService,
+            DapperContext dapperContext
             )
         {
             _productRepository = productRepository;
@@ -49,6 +53,7 @@ namespace DoAn3API.Services.Products
             _categoryService = categoryService;
             _productCategoryRepository = productCategoryRepository;
             _firebaseService = firebaseService;
+            _dapperContext = dapperContext;
         }
 
         public async Task<int> CreateProduct(CreateProductDto productDto)
@@ -351,6 +356,17 @@ namespace DoAn3API.Services.Products
 
             await _productRepository.Update(product, product.Id);
 
+        }
+
+        public async Task AddOrRemoveQuantityStock(int productID, int quantity)
+        {
+            using (var con = _dapperContext.CreateConnection())
+            {
+                var sql = $@"UPDATE Products SET Quantity = {quantity} WHERE Id = {productID}";
+
+                await con.ExecuteAsync(sql);
+
+            }
         }
     }
 }
