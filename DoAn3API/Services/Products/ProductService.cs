@@ -191,6 +191,19 @@ namespace DoAn3API.Services.Products
                 .Include(x => x.ProductImages.Where(x => x.IsDefault == true && x.IsDelete == false))
                 .Where(x => x.IsDelete == false);
 
+            if(requestDto.CategoryID > 0)
+            {
+                listProduct = _categoryService.GetAllProductByCategoryId(requestDto, requestDto.CategoryID);
+            }
+
+            if (!string.IsNullOrEmpty(requestDto.Search))
+            {
+                var searchTextConvert = StringExtension.RemoveDiacritics(requestDto.Search);
+
+                listProduct = listProduct.Where(x => x.SeoTitle.ToLower().Contains(searchTextConvert.ToLower()));
+            }
+
+
             #region SORTING
             //Default sort by date created
             listProduct = listProduct.OrderBy(x => x.CreateTime);
