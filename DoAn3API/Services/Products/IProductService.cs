@@ -26,5 +26,7 @@ namespace DoAn3API.Services.Products
         PagedList<ProductDto> GetProductByName(ProductPagedRequestDto pagedRequestDto);
 
         Task UpdateSEOTitle(UpdateProductDto updateProductDto);
+
+        Task AddOrRemoveQuantityStock(int productID, int quantity);
     }
 }

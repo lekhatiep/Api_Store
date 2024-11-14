@@ -5,6 +5,7 @@ using DoAn3API.DataContext;
 using DoAn3API.Dtos.OrderItems;
 using DoAn3API.Dtos.Orders;
 using DoAn3API.Services.Carts;
+using DoAn3API.Services.Products;
 using Domain.Common.Paging;
 using Domain.Entities.Catalog;
 using Infastructure.Repositories.Catalogs.CartRepos;
@@ -28,6 +29,7 @@ namespace DoAn3API.Services.Orders
         private readonly ICartService _cartService;
         private readonly ICartRepository _cartRepository;
         private readonly DapperContext _dapperContext;
+        private readonly IProductService _productService;
 
         public OrderService(
             IOrderRepository orderRepository,
@@ -36,7 +38,8 @@ namespace DoAn3API.Services.Orders
             ICartRepository cartRepository,
             IOrderItemRepository orderItemRepository,
             IProductRepository productRepository,
-            DapperContext dapperContext
+            DapperContext dapperContext,
+            IProductService productService
             )
         {
             _orderRepository = orderRepository;
@@ -45,6 +48,7 @@ namespace DoAn3API.Services.Orders
             _cartRepository = cartRepository;
             _orderItemRepository = orderItemRepository;
             _productRepository = productRepository;
+            _productService = productService;
             _dapperContext = dapperContext;
         }
 
@@ -274,10 +278,38 @@ namespace DoAn3API.Services.Orders
             {
                 using (var con = _dapperContext.CreateConnection())
                 {
-                    var sql = $@"UPDATE Orders SET Status = {status} WHERE Id = {orderID}";
+                    var order = con.Query<Order>($"Select * from Orders where Status = {status} and Id = {orderID}").FirstOrDefault();
+
+                    if (order != null)
+                    {
+                        return 1;
+                    }
+
+                    var sql = $@"if Not exists ( select * from Orders where Status = {status} and Id = {orderID})
+                                UPDATE Orders SET Status = {status} WHERE Id = {orderID}";
 
                     await con.ExecuteAsync(sql);
 
+                    
+                    var orderItems = await _orderItemRepository.List().Where(x => x.OrderId == orderID).ToListAsync();
+
+                    foreach (var item in orderItems)
+                    {
+                        var product = await _productService.GetProductById(item.ProductId);
+                        double quantityUpdate = 0;
+                        if (status == CatalogConst.OrderStatus.Completed)
+                        {
+                            quantityUpdate = product.Quantity - item.Quantity;
+                        }
+
+                        if (status == CatalogConst.OrderStatus.Cancel)
+                        {
+                            quantityUpdate = product.Quantity + item.Quantity;
+                        }
+
+                        await _productService.AddOrRemoveQuantityStock(item.ProductId, (int)quantityUpdate);
+                    }
+                    
                     return 1;
                 }
             }

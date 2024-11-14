@@ -22,5 +22,7 @@ namespace DoAn3API.Dtos.Products
         //Filter
 
         public string Search { get; set; }
+
+        public int CategoryID { get; set; }
     }
 }
