@@ -297,5 +297,47 @@ namespace DoAn3API.Services.Carts
 
             return queryCart;
         }
+
+        public async Task<List<CartItemDto>> SynListCartItem(List<UpdateCartItemDto> updateCartItemDtos)
+        {
+            var identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
+            var cart = await GetCartUserById(userId);
+            var listCartItems = await _cartItemRepository.List().Where(x => x.CartId == cart.Id).ToListAsync();         
+
+            return await GetUserListCartItem(cart.Id);
+        }
+
+        public async Task SyncListCartCartItem(List<CartItemDto> listCartItem)
+        {
+            var currentCart = await GetCurrentCartIDByUser();
+
+            var listCartStore = await GetUserListCartItem(currentCart.Id);
+
+            foreach (var item in listCartItem)
+            {
+                var exists = listCartStore.Where(x => x.Id == item.Id).FirstOrDefault();
+
+                if (exists is null)
+                {
+                    var newItem = new CreateCartItemDto()
+                    {
+                        ProductId = item.ProductId,
+                        Price = item.Price,
+                        Quantity = item.Quantity,
+                        UserId = currentCart.UserId
+                    };
+
+                    await AddToCart(newItem);
+                }
+            }
+        }
+
+        public async Task<Cart> GetCurrentCartIDByUser()
+        {
+            var identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
+            return await GetCartUserById(userId);
+        }
     }
 }

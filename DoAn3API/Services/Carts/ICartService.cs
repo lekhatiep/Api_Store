@@ -27,5 +27,10 @@ namespace DoAn3API.Services.Carts
 
         Task<List<CartItemDto>> GetUserListCartItemIsOrder(int cartId);
 
+        Task SyncListCartCartItem(List<CartItemDto> listCartItem);
+
+        Task<Cart> GetCurrentCartIDByUser();
+
+
     }
 }

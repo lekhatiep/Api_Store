@@ -10,7 +10,7 @@ namespace DoAn3API.Dtos.TokenDto
         [JsonPropertyName("token_type")]
         public string TokenType { get; set; }
 
-        [JsonPropertyName("experies_in")]
+        [JsonPropertyName("expired_in")]
         public int TotalSecond { get; set; }
     }
 }

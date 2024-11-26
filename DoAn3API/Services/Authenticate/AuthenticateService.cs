@@ -53,8 +53,8 @@ namespace DoAn3API.Services.Authenticate
             var user = await _context.Users
                       .Include(x => x.UserRoles)
                       .ThenInclude(x => x.Role)
-                      .Where( x => x.Email.ToLower().Contains(login.Email.ToLower()))
-                      .Where( x => x.Password.ToLower().Contains(login.Password.ToLower()))
+                      .Where( x => x.Email.ToLower() == login.Email.ToLower())
+                      .Where( x => x.Password.ToLower() == login.Password.ToLower())
                       .SingleOrDefaultAsync();
 
             if (user is null)
