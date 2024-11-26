@@ -130,5 +130,25 @@ namespace DoAn3API.Controllers.Catalog
 
             return Ok(listCart);
         }
+
+        [CustomAuthorize(Constants.NamePermissions.Carts.Edit)]
+        [HttpPost("SyncListCart")]
+        public async Task<IActionResult> SyncListCart([FromBody] List<CartItemDto> listCartItem)
+        {
+            try
+            {
+               await _cartService.SyncListCartCartItem(listCartItem);
+                var currentCart = await _cartService.GetCurrentCartIDByUser();
+
+                var listCart = await _cartService.GetUserListCartItem(currentCart.Id);
+
+                return Ok(listCart ?? new List<CartItemDto>());
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
