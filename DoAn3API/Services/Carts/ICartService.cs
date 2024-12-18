@@ -30,7 +30,7 @@ namespace DoAn3API.Services.Carts
         Task SyncListCartCartItem(List<CartItemDto> listCartItem);
 
         Task<Cart> GetCurrentCartIDByUser();
-
+        Task<int> UpdateItemInCart(UpdateCartItemDto updateCartItemDto);
 
     }
 }

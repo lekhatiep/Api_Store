@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Dapper;
 using DoAn3API.Constants.Catalogs;
+using DoAn3API.DataContext;
 using DoAn3API.Dtos.CartItems;
 using DoAn3API.Dtos.Carts;
 using DoAn3API.Services.Users;
@@ -26,6 +28,7 @@ namespace DoAn3API.Services.Carts
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly DapperContext _dapperContext;
 
         public CartService(
             IMapper mapper,
@@ -34,7 +37,8 @@ namespace DoAn3API.Services.Carts
             ICartRepository cartRepository,
             ICartItemRepository cartItemRepository,
             IUserService userService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            DapperContext dapperContext)
         {
             _mapper = mapper;
             _productRepository = productRepository;
@@ -42,6 +46,7 @@ namespace DoAn3API.Services.Carts
             _cartItemRepository = cartItemRepository;
             _userService = userService;
             this.httpContextAccessor = httpContextAccessor;
+            _dapperContext = dapperContext;
         }
  
 
@@ -146,7 +151,8 @@ namespace DoAn3API.Services.Carts
                                  Price = x.ci.Price,
                                  Quantity = x.ci.Quantity,
                                  Total = Convert.ToDouble(x.ci.Quantity * x.p.Price),
-                                 Active = x.ci.Active
+                                 Active = x.ci.Active,
+                                 IsChecked = x.ci.IsChecked
                              }).ToListAsync();
                             ;
 
@@ -310,7 +316,10 @@ namespace DoAn3API.Services.Carts
 
         public async Task SyncListCartCartItem(List<CartItemDto> listCartItem)
         {
-            var currentCart = await GetCurrentCartIDByUser();
+            var identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var userId = int.Parse(identity.FindFirst("Id").Value);
+
+            var currentCart = await GetCurrentCartIDByUser() ?? new Cart();
 
             var listCartStore = await GetUserListCartItem(currentCart.Id);
 
@@ -325,7 +334,7 @@ namespace DoAn3API.Services.Carts
                         ProductId = item.ProductId,
                         Price = item.Price,
                         Quantity = item.Quantity,
-                        UserId = currentCart.UserId
+                        UserId = userId
                     };
 
                     await AddToCart(newItem);
@@ -338,6 +347,32 @@ namespace DoAn3API.Services.Carts
             var identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             var userId = int.Parse(identity.FindFirst("Id").Value);
             return await GetCartUserById(userId);
+        }
+
+        public async Task<int> UpdateItemInCart(UpdateCartItemDto updateCartItemDto)
+        {
+            var rs = 0;
+
+            try
+            {
+                using (var con = _dapperContext.CreateConnection())
+                {
+                    var sql = @"
+                                    IF EXISTS(SELECT * FROM CartItem WHERE Id = @ID AND CartId = @CartId)
+                                    UPDATE CartItem
+                                    SET Quantity = @Quantity, IsChecked = @IsChecked
+                                    WHERE Id = @Id AND CartId = @CartId";
+                    rs = await con.ExecuteAsync(sql, updateCartItemDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                rs = 0;
+                throw;
+            }
+
+            return rs;
+            
         }
     }
 }

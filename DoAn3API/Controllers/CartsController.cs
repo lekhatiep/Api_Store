@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -149,6 +150,26 @@ namespace DoAn3API.Controllers.Catalog
 
                 return BadRequest(e.Message);
             }
+        }
+
+        [CustomAuthorize(Constants.NamePermissions.Carts.Edit)]
+        [HttpPut("UpdateItemInCart")]
+        public async Task<IActionResult> UpdateItemInCart([FromBody] UpdateCartItemDto updateCartItemDto)
+        {
+
+            var rs = await _cartService.UpdateItemInCart(updateCartItemDto);
+
+            if(rs > 0)
+            {
+                var listCart = await _cartService.GetUserListCartItem(updateCartItemDto.CartId);
+
+                return Ok(listCart ?? new List<CartItemDto>());
+            }
+            else
+            {
+                return BadRequest(HttpStatusCode.BadRequest);
+            }
+
         }
     }
 }
